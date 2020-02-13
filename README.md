@@ -5,7 +5,9 @@
 [![npm downloads](https://img.shields.io/npm/dm/serverless-plugin-select.svg)](https://www.npmjs.com/package/serverless-plugin-select)
 [![license](https://img.shields.io/npm/l/serverless-plugin-select.svg)](https://raw.githubusercontent.com/FidelLimited/serverless-plugin-select/master/LICENSE)
 
-Select which resources are to be deployed based on region and stage.
+Select which resources are to be deployed based on region and stage. Only tested with AWS.
+
+This plugin was originally forked from [serverless-plugin-select](https://github.com/FidelLimited/serverless-plugin-select/). Difference between them is `serverless-plugin-select` is for filtering functions and this plugin is for filtering AWS resources while deploying.
 
 **Note:** Requires Serverless *v1.12.x* or higher.
 
@@ -40,21 +42,29 @@ plugins:
 * **regions** - Resource accepted deployment regions.
 
 ```yml
-functions:
-  hello:
-    regions:
-      - eu-west-1
-      - ...
+resources:
+  Resources:
+    AwesomeQueueInSingleRegion:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: awesome-queue-in-single-region
+      regions:
+        - 'eu-central-1'
+        - ...
 ```
 
 * **stages** - Resource accepted deployment stages.
 
 ```yml
-functions:
-  hello:
-    stages:
-      - dev
-      - ...
+resources:
+  Resources:
+    AwesomeQueueInSingleStage:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: awesome-queue-in-single-stage
+      stages:
+        - dev
+        - prod
 ```
 
 ## Contribute
