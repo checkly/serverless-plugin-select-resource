@@ -1,9 +1,9 @@
 # Serverless Select Resource Plugin
 
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com) 
-[![npm version](https://badge.fury.io/js/serverless-plugin-select.svg)](https://badge.fury.io/js/serverless-plugin-select)
-[![npm downloads](https://img.shields.io/npm/dm/serverless-plugin-select.svg)](https://www.npmjs.com/package/serverless-plugin-select)
-[![license](https://img.shields.io/npm/l/serverless-plugin-select.svg)](https://raw.githubusercontent.com/FidelLimited/serverless-plugin-select/master/LICENSE)
+[![npm version](https://badge.fury.io/js/serverless-plugin-select-resource.svg)](https://badge.fury.io/js/serverless-plugin-select-resource)
+[![npm downloads](https://img.shields.io/npm/dm/serverless-plugin-select-resource.svg)](https://www.npmjs.com/package/serverless-plugin-select-resource)
+[![license](https://img.shields.io/npm/l/serverless-plugin-select-resource.svg)](https://raw.githubusercontent.com/checkly/serverless-plugin-select-resource/master/LICENSE)
 
 Select which resources are to be deployed based on region and stage. Only tested with AWS.
 

@@ -14,16 +14,17 @@
     "url": "git+https://github.com/checkly/serverless-plugin-select-resource.git"
   },
   "keywords": [
-    "serverless plugin select functions",
+    "serverless plugin select resources",
     "serverless select",
+    "serverless select resources",
     "serverless plugin",
     "lambda serverless",
     "select lambda for deploy"
   ],
   "bugs": {
-    "url": "https://github.com/FidelLimited/serverless-plugin-select/issues"
+    "url": "https://github.com/checkly/serverless-plugin-select-resource/issues"
   },
-  "homepage": "https://github.com/FidelLimited/serverless-plugin-select",
+  "homepage": "https://github.com/checkly/serverless-plugin-select-resource",
   "devDependencies": {
     "standard": "^10.0.2"
   }
