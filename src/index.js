@@ -1,21 +1,18 @@
 'use strict'
 
 /**
- * @module serverless-plugin-select
+ * @module serverless-plugin-select-resource
  *
  * @see {@link https://serverless.com/framework/docs/providers/aws/guide/plugins/}
- *
- * @requires 'bluebird'
  * */
-const BbPromise = require('bluebird')
 
 /**
- * @classdesc Select which functions are to be deployed
- * @class Select
+ * @classdesc Select which resources are to be deployed
+ * @class SelectResource
  * */
-class Select {
+class SelectResource {
   /**
-   * @description Serverless Select
+   * @description Serverless Select Resource
    * @constructor
    *
    * @param {!Object} serverless - Serverless object
@@ -29,99 +26,113 @@ class Select {
     /** Serverless hooks */
     this.hooks = {
       'after:package:initialize': this.deployHook.bind(this),
-      'before:deploy:function:initialize': this.deployHook.bind(this)
+      'before:deploy:resource:initialize': this.deployHook.bind(this)
     }
   }
 
   /**
    * @description Deploy hook
    *
-   * @fulfil {} — Functions optimized
+   * @fulfil {} — Resources optimized
    * @reject {Error} Optimization error
    *
    * @return {(boolean|Promise)}
    * */
   deployHook () {
-    /** Skip function selection */
+    /** Skip resource selection */
     if (this.options.noDeploy) {
       return false
     }
 
-    /** Log select start */
-    this.serverless.cli.log('Select: selecting functions for deployment')
+    /** Log select resources start */
+    this.serverless.cli.log(
+      'select-resource: selecting resources for deployment'
+    )
 
-    /** Select single function */
-    if (this.options.function) {
-      return this.selectFunction(this.options.function)
-    } else {
-      /** Select all functions */
-      return this.selectAllFunctions()
-    }
+    /** Select all resources */
+    return this.selectAllResources()
   }
 
   /**
-   * @description Select all functions
+   * @description Select all resources
    *
-   * @fulfil {} — All selected functions
+   * @fulfil {} — All selected resources
    * @reject {Error} Selection error
    *
    * @return {Promise}
    * */
-  selectAllFunctions () {
-    /** Get functions */
-    const allFunctions = this.serverless.service.getAllFunctions()
+  selectAllResources () {
+    /** Get resources */
+    const allResources = Object.keys(
+      this.serverless.service.resources.Resources
+    )
 
-    /** Select functions for deployment */
-    return BbPromise.map(allFunctions, (functionName) => {
-      return this.selectFunction(functionName)
-    })
+    /** Select resources for deployment */
+    const promises = allResources.map((resourceName) =>
+      this.selectResource(resourceName)
+    )
+    return Promise.all(promises)
   }
 
   /**
-   * @description Select function
+   * @description Select resource
    *
-   * @param {string} functionName - Function name
+   * @param {string} resourceName - Resource name
    *
-   * @fulfil {} — Selected function
+   * @fulfil {} — Selected resource
    * @reject {Error} Selection error
    *
    * @return {Promise}
    * */
-  selectFunction (functionName) {
+  selectResource (resourceName) {
     /** Select promise */
-    return new BbPromise((resolve, reject) => {
-      /** Function object variables */
-      const functionObject = this.serverless.service.getFunction(functionName)
+    return new Promise((resolve, reject) => {
+      /** Resource object variables */
+      const resourceObject = this.serverless.service.resources.Resources[resourceName]
 
       /** Select function properties */
-      const regions = Array.isArray(functionObject.regions) && functionObject.regions.length ? functionObject.regions : false
-      const stages = Array.isArray(functionObject.stages) && functionObject.stages.length ? functionObject.stages : false
+      const regions =
+        Array.isArray(resourceObject.regions) && resourceObject.regions.length
+          ? resourceObject.regions
+          : false
+      const stages =
+        Array.isArray(resourceObject.stages) && resourceObject.stages.length
+          ? resourceObject.stages
+          : false
 
-      /** Deployment region not selected for function deployment */
-      if (regions && typeof this.options.region !== 'undefined' && regions.indexOf(this.options.region) === -1) {
-        delete this.serverless.service.functions[functionName]
-
-        /** Reject promise if deploying one function */
-        if (this.options.function) {
-          return reject('Select: ' + functionName + ' not selected for deployment in ' + this.options.region + ' region.')
-        }
+      /** Deployment region not selected for resource deployment */
+      if (
+        regions &&
+        typeof this.options.region !== 'undefined' &&
+        regions.indexOf(this.options.region) === -1
+      ) {
+        delete this.serverless.service.resources.Resources[resourceName]
       }
 
-      /** Deployment stage not selected for function deployment */
-      if (stages && typeof this.options.stage !== 'undefined' && stages.indexOf(this.options.stage) === -1) {
-        delete this.serverless.service.functions[functionName]
+      /** Deployment stage not selected for resource deployment */
+      if (
+        stages &&
+        typeof this.options.stage !== 'undefined' &&
+        stages.indexOf(this.options.stage) === -1
+      ) {
+        delete this.serverless.service.resources.Resources[resourceName]
+      }
 
-        /** Reject promise if deploying one function */
-        if (this.options.function) {
-          return reject('Select: ' + functionName + ' not selected for deployment in ' + this.options.stage + ' stage.')
-        }
+      /** Remove the regions and stages keys to keep generated CloudFormation files correct **/
+      if (
+        this.serverless.service.resources.Resources[resourceName['regions']]
+      ) {
+        delete this.serverless.service.resources.Resources[resourceName]['regions']
+      }
+      if (this.serverless.service.resources.Resources[resourceName['stages']]) {
+        delete this.serverless.service.resources.Resources[resourceName]['stages']
       }
 
       /** Resolve with function object */
-      resolve(functionObject)
+      resolve(resourceObject)
     })
   }
 }
 
 /** Export stages class */
-module.exports = Select
+module.exports = SelectResource

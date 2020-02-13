@@ -1,17 +1,17 @@
 {
-  "name": "serverless-plugin-select",
-  "version": "2.0.0-rc.1",
-  "description": "Serverless plugin that selects which functions are to be deployed.",
+  "name": "serverless-plugin-select-resource",
+  "version": "0.0.1",
+  "description": "Serverless plugin that selects which resources are to be deployed.",
   "main": "src/index.js",
   "scripts": {
     "lint": "node_modules/.bin/standard src/**",
     "lint:fix": "node_modules/.bin/standard --fix src/**"
   },
-  "author": "Gonçalo Neves",
+  "author": "Batuhan Icoz <batuhan@checklyhq.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FidelLimited/serverless-plugin-select.git"
+    "url": "git+https://github.com/checkly/serverless-plugin-select-resource.git"
   },
   "keywords": [
     "serverless plugin select functions",
@@ -24,9 +24,6 @@
     "url": "https://github.com/FidelLimited/serverless-plugin-select/issues"
   },
   "homepage": "https://github.com/FidelLimited/serverless-plugin-select",
-  "dependencies": {
-    "bluebird": "^3.5.0"
-  },
   "devDependencies": {
     "standard": "^10.0.2"
   }
