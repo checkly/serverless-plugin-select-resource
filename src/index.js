@@ -119,14 +119,10 @@ class SelectResource {
       }
 
       /** Remove the regions and stages keys to keep generated CloudFormation files correct **/
-      if (
-        this.serverless.service.resources.Resources[resourceName['regions']]
-      ) {
-        delete this.serverless.service.resources.Resources[resourceName]['regions']
-      }
-      if (this.serverless.service.resources.Resources[resourceName['stages']]) {
-        delete this.serverless.service.resources.Resources[resourceName]['stages']
-      }
+      Object.assign(this.serverless.service.resources.Resources[resourceName], {
+        regions: undefined,
+        stages: undefined
+      })
 
       /** Resolve with function object */
       resolve(resourceObject)
