@@ -117,6 +117,17 @@ class SelectResource {
         stages.indexOf(this.options.stage) === -1
       ) {
         this.serverless.cli.log(this.pluginName+" STAGE:"+this.options.stage+ " disable resource:" + resourceName);
+        const statements = this.serverless.service.provider.iamRoleStatements
+        for (let st in statements) {
+            for (const e in statements[st].Resource) {
+                const resource = statements[st].Resource[e];
+                const resourceStr = JSON.stringify(resource);
+                if( resourceStr.indexOf(`"${resourceName}"`) !== -1 ) {
+                    this.serverless.cli.log(this.pluginName+" STAGE:"+this.options.stage+ " disable statement:" +  resourceStr);
+                    delete this.serverless.service.provider.iamRoleStatements[st].Resource[e];
+                }
+            }
+        }
         delete this.serverless.service.resources.Resources[resourceName]
       }
 
