@@ -101,7 +101,7 @@ class SelectResource {
           ? resourceObject.stages
           : false
       if( stages ) {
-          this.serverless.cli.log("found stages: " + stages + " in " + resourceName);
+          this.serverless.cli.log(this.pluginName+": found stages: " + stages + " in " + resourceName);
       }
       /** Deployment region not selected for resource deployment */
       if (
