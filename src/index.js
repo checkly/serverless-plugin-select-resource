@@ -22,6 +22,7 @@ class SelectResource {
     /** Serverless variables */
     this.serverless = serverless
     this.options = options
+    this.pluginName = "select-resource"
 
     /** Serverless hooks */
     this.hooks = {
@@ -46,7 +47,7 @@ class SelectResource {
 
     /** Log select resources start */
     this.serverless.cli.log(
-      'select-resource: selecting resources for deployment'
+      this.pluginName +': selecting resources for deployment'
     )
 
     /** Select all resources */
@@ -99,22 +100,49 @@ class SelectResource {
         Array.isArray(resourceObject.stages) && resourceObject.stages.length
           ? resourceObject.stages
           : false
-
+      if( stages ) {
+          this.serverless.cli.log(this.pluginName+": found stages: " + stages + " in " + resourceName);
+      }
       /** Deployment region not selected for resource deployment */
       if (
-        regions &&
-        typeof this.options.region !== 'undefined' &&
-        regions.indexOf(this.options.region) === -1
+        regions && typeof this.options.region !== 'undefined' && regions.indexOf(this.options.region) === -1
       ) {
+        this.serverless.cli.log("disable resource:", resourceName);
         delete this.serverless.service.resources.Resources[resourceName]
       }
-
+    /* 
+     // enable for debugging
+    if( typeof stages.indexOf == "function") { 
+        this.serverless.cli.log( resourceName +  "::::"+ stages.indexOf(this.options.stage)  );
+        console.log(resourceName, stages, typeof this.options.stage !== 'undefined', typeof stages.indexOf == 'function' , stages.indexOf(this.options.stage) === -1)
+        console.log(
+        stages &&
+        typeof this.options.stage !== 'undefined' &&
+        typeof stages.indexOf == 'function' &&
+        stages.indexOf(this.options.stage) === -1
+        )
+    }
+    */
       /** Deployment stage not selected for resource deployment */
       if (
         stages &&
         typeof this.options.stage !== 'undefined' &&
+        typeof stages.indexOf == 'function' &&
         stages.indexOf(this.options.stage) === -1
       ) {
+        this.serverless.cli.log(this.pluginName+" STAGE:"+this.options.stage+ " disable resource:" + resourceName);
+        const statements = this.serverless.service.provider.iamRoleStatements
+        for (let st in statements) {
+            for (const e in statements[st].Resource) {
+                const resource = statements[st].Resource[e];
+                const resourceStr = JSON.stringify(resource);
+                if( resourceStr.indexOf(`"${resourceName}"`) !== -1 ) {
+                    this.serverless.cli.log(this.pluginName+" STAGE:"+this.options.stage+ " disable statement:" +  resourceStr);
+                    this.serverless.service.provider.iamRoleStatements[st].Resource.slice(e,1);
+                    // console.log(this.serverless.service.provider.iamRoleStatements[st].Resource)
+                }
+            }
+        }
         delete this.serverless.service.resources.Resources[resourceName]
       }
 
