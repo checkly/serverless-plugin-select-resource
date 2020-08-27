@@ -22,6 +22,7 @@ class SelectResource {
     /** Serverless variables */
     this.serverless = serverless
     this.options = options
+    this.pluginName = "select-resource"
 
     /** Serverless hooks */
     this.hooks = {
@@ -46,7 +47,7 @@ class SelectResource {
 
     /** Log select resources start */
     this.serverless.cli.log(
-      'select-resource: selecting resources for deployment'
+      this.pluginName +': selecting resources for deployment'
     )
 
     /** Select all resources */
@@ -102,10 +103,9 @@ class SelectResource {
 
       /** Deployment region not selected for resource deployment */
       if (
-        regions &&
-        typeof this.options.region !== 'undefined' &&
-        regions.indexOf(this.options.region) === -1
+        regions && typeof this.options.region !== 'undefined' && regions.indexOf(this.options.region) === -1
       ) {
+        this.serverless.cli.log("disable resource:", resourceName);
         delete this.serverless.service.resources.Resources[resourceName]
       }
 
@@ -113,8 +113,10 @@ class SelectResource {
       if (
         stages &&
         typeof this.options.stage !== 'undefined' &&
+        //typeof stages.indexOf == 'function' &&
         stages.indexOf(this.options.stage) === -1
       ) {
+        this.serverless.cli.log(this.pluginName+" STAGE:"+this.options.stage+ " disable resource:" + resourceName);
         delete this.serverless.service.resources.Resources[resourceName]
       }
 
