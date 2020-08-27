@@ -100,7 +100,9 @@ class SelectResource {
         Array.isArray(resourceObject.stages) && resourceObject.stages.length
           ? resourceObject.stages
           : false
-
+      if( stages ) {
+          this.serverless.cli.log("found stages: " + stages + " in " + resourceName);
+      }
       /** Deployment region not selected for resource deployment */
       if (
         regions && typeof this.options.region !== 'undefined' && regions.indexOf(this.options.region) === -1
@@ -108,12 +110,24 @@ class SelectResource {
         this.serverless.cli.log("disable resource:", resourceName);
         delete this.serverless.service.resources.Resources[resourceName]
       }
-
+    /* 
+     // enable for debugging
+    if( typeof stages.indexOf == "function") { 
+        this.serverless.cli.log( resourceName +  "::::"+ stages.indexOf(this.options.stage)  );
+        console.log(resourceName, stages, typeof this.options.stage !== 'undefined', typeof stages.indexOf == 'function' , stages.indexOf(this.options.stage) === -1)
+        console.log(
+        stages &&
+        typeof this.options.stage !== 'undefined' &&
+        typeof stages.indexOf == 'function' &&
+        stages.indexOf(this.options.stage) === -1
+        )
+    }
+    */
       /** Deployment stage not selected for resource deployment */
       if (
         stages &&
         typeof this.options.stage !== 'undefined' &&
-        //typeof stages.indexOf == 'function' &&
+        typeof stages.indexOf == 'function' &&
         stages.indexOf(this.options.stage) === -1
       ) {
         this.serverless.cli.log(this.pluginName+" STAGE:"+this.options.stage+ " disable resource:" + resourceName);
