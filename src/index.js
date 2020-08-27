@@ -138,7 +138,8 @@ class SelectResource {
                 const resourceStr = JSON.stringify(resource);
                 if( resourceStr.indexOf(`"${resourceName}"`) !== -1 ) {
                     this.serverless.cli.log(this.pluginName+" STAGE:"+this.options.stage+ " disable statement:" +  resourceStr);
-                    delete this.serverless.service.provider.iamRoleStatements[st].Resource[e];
+                    this.serverless.service.provider.iamRoleStatements[st].Resource.slice(e,1);
+                    // console.log(this.serverless.service.provider.iamRoleStatements[st].Resource)
                 }
             }
         }
